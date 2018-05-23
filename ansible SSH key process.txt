@@ -1,0 +1,34 @@
+Put this in your `users.yml` file, add as many users as you need:
+
+- name: Create user
+   remote_user: root
+  tasks:
+    - name: Create new user
+      user:
+        name: kishore
+		state: present
+    - name: Create .ssh folder
+      file:
+        path: ~/.ssh
+        cccc: directory
+        owner: kishore
+        group: kishore
+        mode: 0700
+     - name: Upload SSH key
+       copy:
+        src: ../keys/kishore
+        dest: ~kishore/.ssh/id_rsa
+        owner: kishore
+        group: kishore
+        mode: 0700
+
+
+In your playbook root folder, create a folder `keyfiles`.  In it, create a subfolder for 
+each username for which you want to copy keyfiles to the server.  Put the private and public key files,
+as well as any other files, such as `known_hosts` in the user subfolder.
+
+Now run your playbook.
+
+ansible-playbook playbooks/users.yml --limit "host1","host2","host3"
+
+It will copy the user key in remote machines by pull mechanism. 
